@@ -2,7 +2,14 @@
 
 
 --------------------------------------------------------------------------------
-This repository provides a PyTorch implementation of a variation of [StarGAN](https://arxiv.org/abs/1711.09020)  that use Multi-Octave Convolution that replace the standar convolution in the discriminator and generator. See [https://github.com/yunjey/stargan](https://github.com/yunjey/stargan) for the original content.
+This repository provides a PyTorch implementation of a variation of [StarGAN](https://arxiv.org/abs/1711.09020)  that use Multi-Octave Convolution that replace the standar convolution in the discriminator and generator. See [https://github.com/yunjey/stargan](https://github.com/yunjey/stargan) for the original content. 
+
+The 4 diferent implemetation:
+
+* main.py : Original implementation of StarGAN
+* main.Solo_D.py : Implemntation to train only the discriminator in the clasification task.
+* main.M_OctConv.py: Implementation of StarGAN with the convolution layer changed by M-OctConv layers.
+* main.Tob_S:tarGAN.py:  Implementation of StarGAN with the convolution layer changed by M-OctConv layers and with [Ra-Ls](https://arxiv.org/pdf/1807.00734.pdf) for the loss function
 
 
 <br/>
@@ -19,6 +26,7 @@ This repository provides a PyTorch implementation of a variation of [StarGAN](ht
 <br/>
 
 ## Usage
+to train on CelebA:
 ```
 $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode train --dataset CelebA --image_size 128 --c_dim 5 \
                  --sample_dir stargan_celeba/samples --log_dir stargan_celeba/logs \
@@ -26,7 +34,7 @@ $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --
                  --selected_attrs Black_Hair Blond_Hair Brown_Hair Male Young
 ```
 
-To train StarGAN on RaFD:
+To train on RaFD:
 
 ```
 $ $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode train --dataset RaFD --image_size 128 --c_dim 8 \
@@ -34,7 +42,7 @@ $ $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] 
                  --model_save_dir stargan_rafd/models --result_dir stargan_rafd/results
 ```
 
-To train StarGAN on both CelebA and RafD:
+To train on both CelebA and RafD:
 
 ```
 $ $ python [main.py  | main_M_OctConv.py | main_Tob_StarGAN.py] --mode=train --dataset Both --image_size 256 --c_dim 5 --c2_dim 8 \
@@ -42,7 +50,7 @@ $ $ python [main.py  | main_M_OctConv.py | main_Tob_StarGAN.py] --mode=train --d
                  --model_save_dir stargan_both/models --result_dir stargan_both/results
 ```
 
-To train StarGAN on your own dataset, create a folder structure in the same format as [RaFD](https://github.com/yunjey/StarGAN/blob/master/jpg/RaFD.md) and run the command:
+To train on your own dataset, create a folder structure in the same format as [RaFD](https://github.com/yunjey/StarGAN/blob/master/jpg/RaFD.md) and run the command:
 
 ```
 $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode train --dataset RaFD --rafd_crop_size CROP_SIZE --image_size IMG_SIZE \
@@ -54,7 +62,7 @@ $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --
 
 ### 4. Testing
 
-To test StarGAN on CelebA:
+To test  on CelebA:
 
 ```
 $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode test --dataset CelebA --image_size 128 --c_dim 5 \
@@ -63,7 +71,7 @@ $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --
                  --selected_attrs Black_Hair Blond_Hair Brown_Hair Male Young
 ```
 
-To test StarGAN on RaFD:
+To test  on RaFD:
 
 ```
 $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode test --dataset RaFD --image_size 128 \
@@ -72,7 +80,7 @@ $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --
                  --model_save_dir stargan_rafd/models --result_dir stargan_rafd/results
 ```
 
-To test StarGAN on both CelebA and RaFD:
+To test  on both CelebA and RaFD:
 
 ```
 $ python [main.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode test --dataset Both --image_size 256 --c_dim 5 --c2_dim 8 \
@@ -80,7 +88,7 @@ $ python [main.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode test --datas
                  --model_save_dir stargan_both/models --result_dir stargan_both/results
 ```
 
-To test StarGAN on your own dataset:
+To test  on your own dataset:
 
 ```
 $ python [main.py | main_Solo_D.py | main_M_OctConv.py | main_Tob_StarGAN.py] --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_size IMG_SIZE \
