@@ -27,17 +27,33 @@ def main(config):
     rafd_loader = None
 
     if config.dataset in ['CelebA', 'Both']:
-        celeba_loader = get_loader(config.celeba_image_dir, config.attr_path, config.selected_attrs,
-                                   config.celeba_crop_size, config.image_size, config.batch_size,
-                                   'CelebA', config.mode, config.num_workers)
+        if config.CelebA_data_loader_load_dir == "":
+            celeba_loader = get_loader(config.celeba_image_dir, config.attr_path, config.selected_attrs,
+                                       config.celeba_crop_size, config.image_size, config.batch_size,
+                                       'CelebA', config.mode, config.num_workers)
+        else:
+            with open(config.CelebA_data_loader_load_dir, "rb") as f:
+                celeba_loader = pickle.load(f)
+
     if config.dataset in ['RaFD', 'Both']:
-        rafd_loader = get_loader(config.rafd_image_dir, None, None,
-                                 config.rafd_crop_size, config.image_size, config.batch_size,
-                                 'RaFD', config.mode, config.num_workers)
-    
+        if config.RaFD_data_loader_load_dir == "":
+            rafd_loader = get_loader(config.rafd_image_dir, None, None,
+                                     config.rafd_crop_size, config.image_size, config.batch_size,
+                                     'RaFD', config.mode, config.num_workers)
+        else:
+            with open(config.RaFD_data_loader_load_dir, "rb") as f:
+                rafd_loader = pickle.load(f)
 
     # Solver for training and testing StarGAN.
     solver = Solver(celeba_loader, rafd_loader, config)
+
+    if CelebA_data_loader_save_dir !="":
+        with open(config.CelebA_data_loader_save_dir, "wb") as f:
+            pickle.dump(celeba_loader, f)
+
+    if config.RaFD_data_loader_save_dir != "":
+        with open(config.RaFD_data_loader_save_dir, "rb") as f:
+            pickle.dump(rafd_loader, f)
 
     if config.mode == 'train':
         if config.dataset in ['CelebA', 'RaFD']:
@@ -103,9 +119,17 @@ if __name__ == '__main__':
     parser.add_argument('--log_step', type=int, default=10)
     parser.add_argument('--sample_step', type=int, default=1000)
     parser.add_argument('--model_save_step', type=int, default=10000)
-    parser.add_argument('--lr_update_step', type=int, default=1000); parser.add_argument('--k_D_size', type=int, default=4)
+    parser.add_argument('--lr_update_step', type=int, default=1000)
+
+     #append
+
+    parser.add_argument('--CelebA_data_loader_load_dir', type=str, default="", help='dir to pre-loaded CelebA data_loader')
+    parser.add_argument('--CelebA_data_loader_save_dir', type=str, default="", help='dir save the new CelebA data_loader (not saved if not path is given)')
+    parser.add_argument('--RaFD_data_loader_load_dir', type=str, default="", help='dir to pre-loaded RaFD data_loader')
+    parser.add_argument('--RaFD_data_loader_save_dir', type=str, default="", help='dir save the new RaFD data_loader (not saved if not path is given)')
+
     parser.add_argument('--alpha1', type=float, default=0.5)
     parser.add_argument('--alpha2', type=float, default=0)
+
     config = parser.parse_args()
-    print(config)
     main(config)
