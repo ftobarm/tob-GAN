@@ -7,6 +7,8 @@ import numpy as np
 import os
 import time
 import datetime
+from pytorch_memlab import profile
+
 
 
 class Solver(object):
@@ -177,7 +179,7 @@ class Solver(object):
             return F.binary_cross_entropy_with_logits(logit, target, size_average=False) / logit.size(0)
         elif dataset == 'RaFD':
             return F.cross_entropy(logit, target)
-
+    @profile
     def train(self):
         """Train StarGAN within a single dataset."""
         # Set data loader.
@@ -350,6 +352,7 @@ class Solver(object):
                 d_lr -= (self.d_lr / float(self.num_iters_decay))
                 self.update_lr(g_lr, d_lr)
                 print ('Decayed learning rates, g_lr: {}, d_lr: {}.'.format(g_lr, d_lr))
+    @profile
     def train_multi(self):
         """Train StarGAN with multiple datasets."""        
         # Data iterators.
