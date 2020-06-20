@@ -3,6 +3,8 @@ import argparse
 from files.solver_Tob_StarGAN import Solver
 from files.data_loader import get_loader
 from torch.backends import cudnn
+import pickle
+
 
 
 def str2bool(v):
@@ -47,12 +49,12 @@ def main(config):
     # Solver for training and testing StarGAN.
     solver = Solver(celeba_loader, rafd_loader, config)
 
-    if CelebA_data_loader_save_dir !="":
+    if config.CelebA_data_loader_save_dir !="":
         with open(config.CelebA_data_loader_save_dir, "wb") as f:
             pickle.dump(celeba_loader, f)
 
     if config.RaFD_data_loader_save_dir != "":
-        with open(config.RaFD_data_loader_save_dir, "rb") as f:
+        with open(config.RaFD_data_loader_save_dir, "wb") as f:
             pickle.dump(rafd_loader, f)
 
     if config.mode == 'train':
