@@ -3,8 +3,9 @@ import argparse
 from files.solver import Solver
 from files.data_loader import get_loader
 from torch.backends import cudnn
-from torch.cuda import max_memory_reserved
 import pickle
+from torch.cuda import max_memory_reserved
+from torch.cuda import max_memory_allocated
 
 
 def str2bool(v):
@@ -57,14 +58,17 @@ def main(config):
         with open(config.RaFD_data_loader_save_dir, "wb") as f:
             pickle.dump(rafd_loader, f)
 
-    print("mem:",max_memory_reserved())
+    print("mem-reserved:",max_memory_reserved())
+    print("mem-allocated:",max_memory_allocated())
     if config.mode == 'train':
-        print("mem:",max_memory_reserved())
+        print("mem-reserved:",max_memory_reserved())
+        print("mem-allocated:",max_memory_allocated())
         if config.dataset in ['CelebA', 'RaFD']:
             solver.train()
         elif config.dataset in ['Both']:
             solver.train_multi()
-        print("mem:",max_memory_reserved())
+        print("mem-reserved:",max_memory_reserved())
+        print("mem-allocated:",max_memory_allocated())
     elif config.mode == 'test':
         if config.dataset in ['CelebA', 'RaFD']:
             solver.test()

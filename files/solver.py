@@ -9,6 +9,7 @@ import os
 import time
 import datetime
 from torch.cuda import max_memory_reserved
+from torch.cuda import max_memory_allocated
 
 
 class Solver(object):
@@ -93,7 +94,7 @@ class Solver(object):
         num_params = 0
         for p in model.parameters():
             num_params += p.numel()
-        print(model)
+        #print(model)
         print(name)
         print("The number of parameters: {}".format(num_params))
 
@@ -182,7 +183,8 @@ class Solver(object):
             return F.cross_entropy(logit, target)
 
     def train(self):
-        print(max_memory_reserved())
+        print("mem-reserved:",max_memory_reserved())
+        print("mem-allocated:",max_memory_allocated())
         """Train StarGAN within a single dataset."""
         # Set data loader.
         if self.dataset == 'CelebA':
@@ -341,10 +343,12 @@ class Solver(object):
                 d_lr -= (self.d_lr / float(self.num_iters_decay))
                 self.update_lr(g_lr, d_lr)
                 print ('Decayed learning rates, g_lr: {}, d_lr: {}.'.format(g_lr, d_lr))
-        print("mem:",max_memory_reserved())
+        print("mem-reserved:",max_memory_reserved())
+        print("mem-allocated:",max_memory_allocated())
 
     def train_multi(self):
-        print("mem:",max_memory_reserved())
+        print("mem-reserved:",max_memory_reserved())
+        print("mem-allocated:",max_memory_allocated())
         """Train StarGAN with multiple datasets."""        
         # Data iterators.
         celeba_iter = iter(self.celeba_loader)
@@ -525,7 +529,8 @@ class Solver(object):
                 d_lr -= (self.d_lr / float(self.num_iters_decay))
                 self.update_lr(g_lr, d_lr)
                 print ('Decayed learning rates, g_lr: {}, d_lr: {}.'.format(g_lr, d_lr))
-        print("mem:",max_memory_reserved())
+        print("mem-reserved:",max_memory_reserved())
+        print("mem-allocated:",max_memory_allocated())
 
     def test(self):
         """Translate images using StarGAN trained on a single dataset."""
