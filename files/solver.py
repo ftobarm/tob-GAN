@@ -182,7 +182,7 @@ class Solver(object):
             return F.cross_entropy(logit, target)
 
     def train(self):
-        print(.max_memory_reserved())
+        print(max_memory_reserved())
         """Train StarGAN within a single dataset."""
         # Set data loader.
         if self.dataset == 'CelebA':
