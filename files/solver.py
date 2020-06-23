@@ -262,8 +262,7 @@ class Solver(object):
             # Backward and optimize.
             d_loss = d_loss_real + d_loss_fake + self.lambda_cls * d_loss_cls + self.lambda_gp * d_loss_gp
             self.reset_grad()
-            with LineProfiler(outer, inner) as prof:
-                d_loss.backward()
+            d_loss.backward()
             
             self.d_optimizer.step()
 
