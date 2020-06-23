@@ -8,8 +8,7 @@ import numpy as np
 import os
 import time
 import datetime
-from pytorch_memlab import profile
-
+from torch.cuda import max_memory_reserved
 
 
 class Solver(object):
@@ -52,7 +51,8 @@ class Solver(object):
 
         # Miscellaneous.
         self.use_tensorboard = config.use_tensorboard
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        #self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda')
 
         # Directories.
         self.log_dir = config.log_dir
@@ -180,8 +180,9 @@ class Solver(object):
             return F.binary_cross_entropy_with_logits(logit, target, size_average=False) / logit.size(0)
         elif dataset == 'RaFD':
             return F.cross_entropy(logit, target)
-    @profile
+
     def train(self):
+        print(.max_memory_reserved())
         """Train StarGAN within a single dataset."""
         # Set data loader.
         if self.dataset == 'CelebA':
@@ -261,7 +262,9 @@ class Solver(object):
             # Backward and optimize.
             d_loss = d_loss_real + d_loss_fake + self.lambda_cls * d_loss_cls + self.lambda_gp * d_loss_gp
             self.reset_grad()
-            d_loss.backward()
+            with LineProfiler(outer, inner) as prof:
+                d_loss.backward()
+            
             self.d_optimizer.step()
 
             # Logging.
@@ -339,8 +342,10 @@ class Solver(object):
                 d_lr -= (self.d_lr / float(self.num_iters_decay))
                 self.update_lr(g_lr, d_lr)
                 print ('Decayed learning rates, g_lr: {}, d_lr: {}.'.format(g_lr, d_lr))
-    @profile
+        print("mem:",max_memory_reserved())
+
     def train_multi(self):
+        print("mem:",max_memory_reserved())
         """Train StarGAN with multiple datasets."""        
         # Data iterators.
         celeba_iter = iter(self.celeba_loader)
@@ -521,6 +526,7 @@ class Solver(object):
                 d_lr -= (self.d_lr / float(self.num_iters_decay))
                 self.update_lr(g_lr, d_lr)
                 print ('Decayed learning rates, g_lr: {}, d_lr: {}.'.format(g_lr, d_lr))
+        print("mem:",max_memory_reserved())
 
     def test(self):
         """Translate images using StarGAN trained on a single dataset."""
@@ -550,6 +556,7 @@ class Solver(object):
                 result_path = os.path.join(self.result_dir, '{}-images.jpg'.format(i+1))
                 save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
                 print('Saved real and fake images into {}...'.format(result_path))
+
 
     def test_multi(self):
         """Translate images using StarGAN trained on multiple datasets."""
